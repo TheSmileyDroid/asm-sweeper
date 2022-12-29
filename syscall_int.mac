@@ -1,0 +1,14 @@
+%ifndef SYSCALL_INT_MAC
+%define SYSCALL_INT_MAC
+
+%define STDIN  0
+%define STDOUT 1
+%define STDERR 2
+
+struc termios_s
+	resb 12
+	.flags: resb 12 ; flags
+	resb 44
+endstruc
+
+%endif

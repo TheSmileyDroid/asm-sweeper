@@ -1,4 +1,14 @@
 {
     "editor.tabCompletion": "on",
-    "diffEditor.codeLens": true
+    "diffEditor.codeLens": true,
+    "lldb.showDisassembly": "always",
+    "lldb.dereferencePointers": true,
+    "lldb.consoleMode": "commands",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/gabriel/Projetos/Assembly/asm-sweeper",
+            "binaryPath": "/home/gabriel/Projetos/Assembly/asm-sweeper/sweeper",
+            "binaryArgs": []
+        }
+    ]
 }

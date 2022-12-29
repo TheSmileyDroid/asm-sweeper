@@ -1,0 +1,154 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build Assembly",
+            "type": "shell",
+            "command": "nasm",
+            "args": [
+                "-F",
+                "dwarf",
+                "-g",
+                "-f",
+                "elf64",
+                "-i",
+                "${fileDirname}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}.o",
+                "${file}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+        },
+        {
+            "label": "Link Assembly",
+            "type": "shell",
+            "command": "ld",
+            "args": [
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "${fileDirname}/${fileBasenameNoExtension}.o",
+                "-dynamic-linker",
+                "/lib64/ld-linux-x86-64.so.2",
+                "-lSDL2"
+            ],
+            "dependsOn": "build Assembly",
+        },
+        {
+            "label": "Build C",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "${file}",
+                "-lSDL2"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+        },
+        {
+            "label": "C into Assembly",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-S",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}.s"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "label": "asm32",
+            "type": "shell",
+            "command": "rawfilename=${fileDirname}/${fileBasenameNoExtension}; nasm -F dwarf -g -f elf32 -i ${fileDirname} -o $rawfilename.o ${file}; ld -m elf_i386 -o $rawfilename $rawfilename.o  -dynamic-linker /lib64/ld-linux-x86-64.so.2 -lSDL2;",
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "error"
+                }
+            },
+            "presentation": {
+                "focus": true,
+                "panel": "dedicated",
+                "reveal": "silent",
+                "clear": true
+            }
+        },
+        {
+            "label": "asm64",
+            "type": "shell",
+            "command": "rawfilename=${fileDirname}/${fileBasenameNoExtension}; nasm -F dwarf -g -f elf64 -i ${fileDirname} -o $rawfilename.o ${file}; ld -m elf_x86_64 -o $rawfilename $rawfilename.o  -dynamic-linker /lib64/ld-linux-x86-64.so.2 -lSDL2;",
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "error"
+                }
+            },
+            "presentation": {
+                "focus": true,
+                "panel": "dedicated",
+                "reveal": "silent",
+                "clear": true
+            }
+        },
+        {
+            "label": "gas",
+            "type": "shell",
+            "command": "rawfilename=${fileDirname}/${fileBasenameNoExtension}; as --32 --gstabs+ ${file} -o $rawfilename.o; ld -m elf_i386 $rawfilename.o -o $rawfilename -dynamic-linker /lib64/ld-linux-x86-64.so.2 -lSDL2;",
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "error"
+                }
+            },
+            "presentation": {
+                "focus": true,
+                "panel": "dedicated",
+                "reveal": "silent",
+                "clear": true
+            }
+        },
+        {
+            "label": "asm64+gcc",
+            "type": "shell",
+            "command": "rawfilename=${fileDirname}/${fileBasenameNoExtension}; nasm -F dwarf -g -f elf64 -i ${fileDirname} -o $rawfilename.o ${file}; gcc -fPIE -m64 -o $rawfilename $rawfilename.o  -dynamic-linker /lib64/ld-linux-x86-64.so.2 -lSDL2;",
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "error"
+                }
+            },
+            "presentation": {
+                "focus": true,
+                "panel": "dedicated",
+                "reveal": "silent",
+                "clear": true
+            }
+        },
+        {
+            "label": "asm32+gcc",
+            "type": "shell",
+            "command": "rawfilename=${fileDirname}/${fileBasenameNoExtension}; nasm -F dwarf -g -f elf32 -i ${fileDirname} -o $rawfilename.o ${file}; gcc -m32 -o $rawfilename $rawfilename.o;",
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "error"
+                }
+            },
+            "presentation": {
+                "focus": true,
+                "panel": "dedicated",
+                "reveal": "silent",
+                "clear": true
+            }
+        }
+    ]
+}

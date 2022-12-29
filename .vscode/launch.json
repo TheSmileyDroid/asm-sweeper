@@ -1,0 +1,66 @@
+{
+    // Use o IntelliSense para saber mais sobre os atributos possíveis.
+    // Focalizar para exibir as descrições dos atributos existentes.
+    // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "gdb",
+            "request": "launch",
+            "name": "GDB32",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "stopOnEntry": false,
+            "preLaunchTask": "asm32"
+        },
+        {
+            "type": "gdb",
+            "request": "launch",
+            "name": "GDB64",
+            "program": "${fileDirname}/sweeper",
+            "stopOnEntry": false,
+            "preLaunchTask": "Link Assembly"
+        },
+        {
+            "type": "gdb",
+            "request": "launch",
+            "name": "GAS",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "stopOnEntry": false,
+            "preLaunchTask": "gas"
+        },
+        {
+            "type": "gdb",
+            "request": "launch",
+            "name": "GDB32+GCC",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "stopOnEntry": false,
+            "preLaunchTask": "asm32+gcc"
+        },
+        {
+            "type": "gdb",
+            "request": "launch",
+            "name": "GDB64+GCC",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "stopOnEntry": false,
+            "preLaunchTask": "asm64+gcc"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug",
+            "program": "${workspaceFolder}/sweeper",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Link Assembly",
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug C",
+            "program": "${workspaceFolder}/sweeper_test",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build C",
+        }
+    ]
+}
