@@ -33,6 +33,7 @@
 %define MAP_WALL_7 9
 %define MAP_WALL_8 10
 %define MAP_HEART 11
+%define MAP_EMPTY_HEART 12
 
 %define FOG_VISIBLE 0
 %define FOG_HIDDEN  1
@@ -96,6 +97,7 @@ DEF_ESC_SEQ clear_seq, 'J', '0'
 DEF_ESC_SEQ color_reset_seq, 'm', '0'
 DEF_COLOR_SEQ bright_red, '91', '101'
 DEF_COLOR_SEQ red, '91', '101'
+DEF_COLOR_SEQ black, '30', '40'
 DEF_COLOR_SEQ blue, '34', '44'
 DEF_COLOR_SEQ yellow, '33', '43'
 DEF_COLOR_SEQ bright_yellow, '93', '103'
@@ -114,6 +116,7 @@ DEF_STR_DATA cell_sym, CELL_TEXT
 DEF_STR_DATA text_heart, "♥ "
 DEF_STR_DATA text_heart_counter, "Hearts: "
 DEF_STR_DATA text_heart_counter_end, " / "
+DEF_STR_DATA text_last_cell, "Last cell: "
 NUMBER_CELL 1
 NUMBER_CELL 2
 NUMBER_CELL 3
@@ -138,6 +141,7 @@ input db 0
 frame dq 0
 
 move_dir db 0
+last_cell db 0
 
 section .bss
 
@@ -279,6 +283,9 @@ draw_cell:
 	cmp rax, MAP_HEART
     je .heart
 
+	cmp rax, MAP_EMPTY_HEART
+	je .empty_heart
+
 	jmp .free
 
 	.free:
@@ -327,6 +334,10 @@ draw_cell:
 
 	.heart:
 		DRAW_COLOR_CELL_HEART red
+		jmp .exit
+	
+	.empty_heart:
+		DRAW_COLOR_CELL_HEART gray
 		jmp .exit
 
 	.exit:
@@ -473,8 +484,32 @@ move_player:
     mov rax, [player_x]
     mov rdx, [player_y]
     call get_map_index
-    ; free old player position
-	mov byte [map+rax], MAP_FREE
+    ; if the last cell was a heart or empty heart, add a empty heart to the map
+	mov byte rax, [last_cell]
+	cmp rax, MAP_HEART
+	je .add_empty_heart
+
+	cmp rax, MAP_EMPTY_HEART
+	je .add_empty_heart
+
+	jmp .add_free
+
+	.add_empty_heart:
+		mov rax, [player_x]
+		mov rdx, [player_y]
+		call get_map_index
+		mov byte [map+rax], MAP_EMPTY_HEART
+		jmp .finish_last_cell
+
+	.add_free:
+		mov rax, [player_x]
+		mov rdx, [player_y]
+		call get_map_index
+		mov byte [map+rax], MAP_FREE
+
+	.finish_last_cell:
+
+	; get the direction
 
 	mov al, [move_dir]
 
@@ -533,6 +568,29 @@ move_player:
 		mov rdx, [player_y]
 		call get_map_index
 		call check_cell
+
+		; save cell type
+		mov al, [move_dir]
+		cmp al, DIR_NONE
+		je .continue
+
+		mov rax, [player_x]
+		mov rdx, [player_y]
+		call get_map_index
+
+		cmp byte [map+rax], MAP_HEART
+		je .heart
+
+		cmp byte [map+rax], MAP_EMPTY_HEART
+		je .heart
+
+		mov byte [last_cell], MAP_FREE
+		jmp .continue
+
+		.heart:
+			mov byte [last_cell], MAP_EMPTY_HEART
+		
+		.continue:
 
 		; set new player position
 		mov rax, [player_x]
