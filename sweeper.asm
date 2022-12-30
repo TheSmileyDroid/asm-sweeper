@@ -112,7 +112,7 @@ DEF_STR_DATA text_game_over, "GAME OVER!", 10
 DEF_STR_DATA text_win, "Você ganhou!", 10
 DEF_STR_DATA cell_sym, CELL_TEXT
 DEF_STR_DATA text_heart, "♥ "
-DEF_STR_DATA text_heart_counter, "♥: "
+DEF_STR_DATA text_heart_counter, "Hearts: "
 DEF_STR_DATA text_heart_counter_end, " / "
 NUMBER_CELL 1
 NUMBER_CELL 2
@@ -378,6 +378,29 @@ draw_map:
 
 	mov rax, [score]
 	call print_num
+
+	PRINT_BUF_APPEND text_score_end
+
+	call print_term_buf
+
+	PRINT_BUF_APPEND text_heart_counter
+
+	call print_term_buf
+
+	mov rax, [heart_counter]
+	call print_num
+
+	PRINT_BUF_APPEND text_heart_counter_end
+
+	call print_term_buf
+
+	mov rax, HEART_COUNT
+	call print_num
+
+	PRINT_BUF_APPEND text_score_end
+
+	call print_term_buf
+
 	PRINT_NEW_LINE
 
 	pop r11
@@ -559,7 +582,7 @@ check_cell:
 		jmp .exit
 
 	.heart:
-		add qword [score], 3
+		add qword [score], 5
 		inc qword [heart_counter]
 
 		; if heart_counter is equal to HEART_COUNT then end the game
