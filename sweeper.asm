@@ -377,9 +377,7 @@ draw_map:
 	call print_term_buf
 
 	mov rax, [score]
-	call 5
-
-	PRINT_BUF_APPEND text_score_end
+	call print_num
 	PRINT_NEW_LINE
 
 	pop r11
@@ -734,14 +732,13 @@ get_hearts_around:
 %endmacro
 
 place_walls: ; Place wall in every cell with the number of hearts around
-	mov r13, 1 ; x
-	mov r14, 1 ; y
+	mov r13, 0 ; x
+	mov r14, 0 ; y
 
 	mov r15, SIZE_X
-	sub r15, 1
 
 	.loop_y:
-		mov r13, 1
+		mov r13, 0
 		.loop_x:
 			mov r11, r13
 			mov r12, r14
